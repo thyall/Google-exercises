@@ -41,9 +41,22 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    # Recebendo arquivo
+    myfile = open(filename).read()
 
+    # Procurando pelo ano usando "search" --> modulo re
+    year = re.search(r'>Popularity in (\d{4})',myfile)[1]
+
+    # Procurando os nomes no arquivo html e seu rank
+    name_rank = re.findall(r'<tr align="right"><td>(\d{1})</td><td>(.*)</td><td>(.*)</td>', myfile)
+
+    names = []
+
+    for n in name_rank:
+        names.append(n[1]+ ' ' + n[0])
+        names.append(n[2]+ ' ' + n[0])
+
+    return [year] + sorted(names)
 
 def main():
     # This command-line parsing code is provided.
@@ -65,6 +78,17 @@ def main():
         # For each filename, get the names, then either print the text output
         # or write it to a summary file
 
+    for f in args:
+        print("writing for ", f)
+        names = extract_names(f)
+        lines = '\n'.join(names)
+
+        if summary:
+            f = open(f + '.summary', 'w')
+            f.write(lines + '\n')
+            f.close()
+        else:
+            print(lines)
 
 if __name__ == '__main__':
     main()
